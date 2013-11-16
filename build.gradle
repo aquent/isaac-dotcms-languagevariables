@@ -1,6 +1,6 @@
-apply plugin: 'application'
 apply plugin: 'osgi'
 apply plugin: 'war'
+apply plugin: 'eclipse'
 
 sourceCompatibility = '1.6'
 version = '0.1'
@@ -21,10 +21,11 @@ dependencies {
 
 jar {
     manifest {
-        name = 'peopleman'
-        instruction 'Bundle-Vendor', 'dotcms'
-        instruction 'Bundle-Description', 'Peopleman Example OSGi Example for dotcms '
-        instruction 'Bundle-DocURL', 'http://www.dotcms.com'
+        name = 'ISAAC LanguageVariables'
+        symbolicName = 'nl.isaac.dotcms.languagevariables'
+        instruction 'Bundle-Vendor', 'isaac'
+        instruction 'Bundle-Description', 'ISAAC LanguageVariables Plugin'
+        instruction 'Bundle-DocURL', 'http://geekyplugins.com/dot-cms/language-variables.dot'
         instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
     }
 }
@@ -44,7 +45,3 @@ task osgijar(type: Jar, dependsOn: ['removeVersionsOnManifest'] ) {
     	from('build/tmp/jar/MANIFEST_NOVERSIONS.MF')
     } 
 } 
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
-}
