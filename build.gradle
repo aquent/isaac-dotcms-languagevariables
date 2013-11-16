@@ -1,0 +1,50 @@
+apply plugin: 'application'
+apply plugin: 'osgi'
+apply plugin: 'war'
+
+sourceCompatibility = '1.6'
+version = '0.1'
+
+
+repositories {
+	maven {
+        url "http://repo.dotcms.com/artifactory/libs-release"
+    }
+}
+
+dependencies {
+	compile (group: 'com.dotcms', name: 'dotcms', version: '2.5.1'){
+		transitive = true
+	}
+	providedCompile "javax.servlet:servlet-api:2.5"
+}
+
+jar {
+    manifest {
+        name = 'peopleman'
+        instruction 'Bundle-Vendor', 'dotcms'
+        instruction 'Bundle-Description', 'Peopleman Example OSGi Example for dotcms '
+        instruction 'Bundle-DocURL', 'http://www.dotcms.com'
+        instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
+    }
+}
+
+task removeVersionsOnManifest (dependsOn: ['jar']) << {
+	def manifest1=new java.util.jar.Manifest(new FileInputStream('build/tmp/jar/MANIFEST.MF'))
+	def imports = manifest1.getMainAttributes().find { it.key.toString()=="Import-Package" }
+	imports.value=imports.value.toString().replaceAll(~/;version="[\(\[][0-9\.]+,[0-9\.]+[\)\]]"/,'')
+	manifest1.write(new FileOutputStream("build/tmp/jar/MANIFEST_NOVERSIONS.MF"))
+}
+
+
+task osgijar(type: Jar, dependsOn: ['removeVersionsOnManifest'] ) { 
+    appendix = "generatedjar" 
+    from zipTree(jar.archivePath) // add original content 
+    manifest {
+    	from('build/tmp/jar/MANIFEST_NOVERSIONS.MF')
+    } 
+} 
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
