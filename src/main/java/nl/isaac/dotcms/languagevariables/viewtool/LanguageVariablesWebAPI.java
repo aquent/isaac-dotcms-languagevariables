@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
 import nl.isaac.dotcms.languagevariables.languageservice.ContentGlossaryAPI;
 import nl.isaac.dotcms.languagevariables.util.Configuration;
+import nl.isaac.dotcms.languagevariables.util.RequestUtil;
 
 import org.apache.velocity.tools.view.context.ViewContext;
 import org.apache.velocity.tools.view.tools.ViewTool;
@@ -68,10 +69,55 @@ public class LanguageVariablesWebAPI implements ViewTool {
 		if(shouldReturnKey()) {
 			return key;
 		} else {
+			
+			String reqHost = new RequestUtil(request).getCurrentHost().getIdentifier();
+			boolean live = new RequestUtil(request).isLiveMode();
+			
+			String defLang = String.valueOf(APILocator.getLanguageAPI().getDefaultLanguage().getId());
+			String sysHost = "";
+			try {
+				sysHost = APILocator.getHostAPI().findSystemHost().getIdentifier();
+			} catch (Exception e) {
+				Logger.error(this, "No System Host", e);
+				return addKeyToCacheAndReturnKey(key, languageId);
+			}
+			
+			// First try with the request's language and host
 			ContentGlossaryAPI contentGlossaryAPI = new ContentGlossaryAPI(request);
 			String value = contentGlossaryAPI.getValue(key);
+			if(UtilMethods.isSet(value)) {
+				return value;
+			}
 			
-			return (value == null) ? addKeyToCacheAndReturnKey(key, languageId) : value;
+			// Let's try same host, default language now
+			if(! languageId.equals(defLang)) {
+				contentGlossaryAPI = new ContentGlossaryAPI(defLang, reqHost, live);
+				value = contentGlossaryAPI.getValue(key);
+				if(UtilMethods.isSet(value)) {
+					return value;
+				}
+			}
+			
+			// Now let's try system host, request language
+			if(! reqHost.equals(sysHost)) {
+				contentGlossaryAPI = new ContentGlossaryAPI(languageId, sysHost, live);
+				value = contentGlossaryAPI.getValue(key);
+				if(UtilMethods.isSet(value)) {
+					return value;
+				}
+			}
+			
+			// Now let's try system host, default language
+			if((! reqHost.equals(sysHost)) && (! languageId.equals(defLang))) {
+				contentGlossaryAPI = new ContentGlossaryAPI(languageId, sysHost, live);
+				value = contentGlossaryAPI.getValue(key);
+				if(UtilMethods.isSet(value)) {
+					return value;
+				}
+			}
+			
+			// None of them matched so let's return the key
+			return addKeyToCacheAndReturnKey(key, languageId);
 		}
 	}
 	

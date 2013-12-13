@@ -301,7 +301,7 @@ public class ContentGlossaryAPI {
 	public List<Contentlet> getContentletsWithKey(String key) {
 		//retrieve all the contentlets with the prefix
 		ContentletQuery contentletQuery = new ContentletQuery(Configuration.getStructureVelocityVarName());
-		contentletQuery.addHostAndIncludeSystemHost(hostIdentifier);
+		contentletQuery.addHost(hostIdentifier);
 		contentletQuery.addFieldLimitation(true, Configuration.getStructureKeyField(), key);
 		contentletQuery.addLanguage(languageId);
 

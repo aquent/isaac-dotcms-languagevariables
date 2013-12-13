@@ -27,21 +27,6 @@ jar {
         instruction 'Bundle-Description', 'ISAAC LanguageVariables Plugin'
         instruction 'Bundle-DocURL', 'http://geekyplugins.com/dot-cms/language-variables.dot'
         instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
+        instruction 'Import-Package', '!org.springframework.*', '*;version=0'
     }
-}
-
-task removeVersionsOnManifest (dependsOn: ['jar']) << {
-	def manifest1=new java.util.jar.Manifest(new FileInputStream('build/tmp/jar/MANIFEST.MF'))
-	def imports = manifest1.getMainAttributes().find { it.key.toString()=="Import-Package" }
-	imports.value=imports.value.toString().replaceAll(~/;version="[\(\[][0-9\.]+,[0-9\.]+[\)\]]"/,'')
-	manifest1.write(new FileOutputStream("build/tmp/jar/MANIFEST_NOVERSIONS.MF"))
-}
-
-
-task osgijar(type: Jar, dependsOn: ['removeVersionsOnManifest'] ) { 
-    appendix = "generatedjar" 
-    from zipTree(jar.archivePath) // add original content 
-    manifest {
-    	from('build/tmp/jar/MANIFEST_NOVERSIONS.MF')
-    } 
 } 
