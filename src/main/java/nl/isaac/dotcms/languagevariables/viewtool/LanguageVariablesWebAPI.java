@@ -109,7 +109,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
 			
 			// Now let's try system host, default language
 			if((! reqHost.equals(sysHost)) && (! languageId.equals(defLang))) {
-				contentGlossaryAPI = new ContentGlossaryAPI(languageId, sysHost, live);
+				contentGlossaryAPI = new ContentGlossaryAPI(defLang, sysHost, live);
 				value = contentGlossaryAPI.getValue(key);
 				if(UtilMethods.isSet(value)) {
 					return value;
