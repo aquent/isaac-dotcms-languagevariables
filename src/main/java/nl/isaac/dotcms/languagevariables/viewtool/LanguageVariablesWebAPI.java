@@ -82,11 +82,19 @@ public class LanguageVariablesWebAPI implements ViewTool {
         return addKeyToCacheAndReturnKey(key, languageId);
       }
       
+      // Span styling for good keys
+      String defKeyStyle = "background-color:rgb(225, 224, 255);border:1px dashed #ababab;display:inline-block;padding:0 3px;";
+
       // First try with the request's language and host
       ContentGlossaryAPI contentGlossaryAPI = new ContentGlossaryAPI(request);
       String value = contentGlossaryAPI.getValue(key);
       if(UtilMethods.isSet(value)) {
-        return value;
+        // For live page mode, just return the naked value, otherwise, <span> it so we can see it in use
+        if(!isEditOrPreviewMode()) {
+          return value;
+        } else {
+          return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+        }
       }
       
       // Let's try same host, default language now
@@ -94,7 +102,11 @@ public class LanguageVariablesWebAPI implements ViewTool {
         contentGlossaryAPI = new ContentGlossaryAPI(defLang, reqHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
-          return value;
+          if(!isEditOrPreviewMode()) {
+            return value;
+          } else {
+            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+          }
         }
       }
       
@@ -103,7 +115,11 @@ public class LanguageVariablesWebAPI implements ViewTool {
         contentGlossaryAPI = new ContentGlossaryAPI(languageId, sysHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
-          return value;
+          if(!isEditOrPreviewMode()) {
+            return value;
+          } else {
+            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+          }
         }
       }
       
@@ -112,7 +128,11 @@ public class LanguageVariablesWebAPI implements ViewTool {
         contentGlossaryAPI = new ContentGlossaryAPI(defLang, sysHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
-          return value;
+          if(!isEditOrPreviewMode()) {
+            return value;
+          } else {
+            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+          }
         }
       }
       
