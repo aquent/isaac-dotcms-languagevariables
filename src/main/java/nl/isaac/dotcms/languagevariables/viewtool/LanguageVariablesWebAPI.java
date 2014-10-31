@@ -93,7 +93,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
         if(!isEditOrPreviewMode()) {
           return value;
         } else {
-          return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+          return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
         }
       }
       
@@ -105,7 +105,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -118,7 +118,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -131,7 +131,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -167,7 +167,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
     if(!isEditOrPreviewMode()) {
       return key;
     } else {
-      return "<span style=\"background-color:rgb(255, 239, 242);border:1px dashed #cfcfcf;display:inline-block;padding:0 3px;\" title="Language Key Missing!\">" + key + "</span>";
+      return "<span style=\"background-color:rgb(255, 239, 242);border:1px dashed #cfcfcf;display:inline-block;padding:0 3px;\" title=\"Language Key Missing!\">" + key + "</span>";
     }
   }
   
