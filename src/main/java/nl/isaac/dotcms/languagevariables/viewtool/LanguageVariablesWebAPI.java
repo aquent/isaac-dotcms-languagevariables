@@ -97,6 +97,9 @@ public class LanguageVariablesWebAPI implements ViewTool {
         }
       }
       
+      // Technically this is a miss at this point -- but don't just return here
+      addKeyToCacheAndReturnKey(key, languageId);
+      
       // Let's try same host, default language now
       if(! languageId.equals(defLang)) {
         contentGlossaryAPI = new ContentGlossaryAPI(defLang, reqHost, live);
