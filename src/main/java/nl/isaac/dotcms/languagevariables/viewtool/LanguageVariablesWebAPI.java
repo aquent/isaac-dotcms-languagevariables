@@ -93,7 +93,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
         if(!isEditOrPreviewMode()) {
           return value;
         } else {
-          return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+          return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
         }
       }
       
@@ -105,7 +105,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -118,7 +118,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -131,7 +131,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
           if(!isEditOrPreviewMode()) {
             return value;
           } else {
-            return "<span style=\"" + defKeyStyle + "\" title="Language Key: " + key + "\">" + value + "</span>";
+            return "<span style=\"" + defKeyStyle + "\" title=\"Language Key: " + key + "\">" + value + "</span>";
           }
         }
       }
@@ -140,6 +140,26 @@ public class LanguageVariablesWebAPI implements ViewTool {
       return addKeyToCacheAndReturnKey(key, languageId);
     }
   }
+  
+	public boolean isEditMode() {
+		Object EDIT_MODE_SESSION = request.getSession().getAttribute(com.dotmarketing.util.WebKeys.EDIT_MODE_SESSION);
+		if(EDIT_MODE_SESSION != null) {
+			return Boolean.valueOf(EDIT_MODE_SESSION.toString());
+		}
+		return false; 
+	}
+	
+	public boolean isPreviewMode() {
+		Object PREVIEW_MODE_SESSION = request.getSession().getAttribute(com.dotmarketing.util.WebKeys.PREVIEW_MODE_SESSION);
+		if(PREVIEW_MODE_SESSION != null) {
+			return Boolean.valueOf(PREVIEW_MODE_SESSION.toString());
+		}
+		return false; 
+	}
+	
+	public boolean isEditOrPreviewMode() {
+		return isEditMode() || isPreviewMode();
+	}
   
   /**
    * Add key without value to a cache list per language, so it can be displayed on the portlet
@@ -167,7 +187,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
     if(!isEditOrPreviewMode()) {
       return key;
     } else {
-      return "<span style=\"background-color:rgb(255, 239, 242);border:1px dashed #cfcfcf;display:inline-block;padding:0 3px;\" title="Language Key Missing!\">" + key + "</span>";
+      return "<span style=\"background-color:rgb(255, 239, 242);border:1px dashed #cfcfcf;display:inline-block;padding:0 3px;\" title=\"Language Key Missing!\">" + key + "</span>";
     }
   }
   

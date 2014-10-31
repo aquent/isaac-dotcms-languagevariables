@@ -1,32 +1,39 @@
 apply plugin: 'osgi'
 apply plugin: 'war'
 apply plugin: 'eclipse'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-eclipse'
 
-sourceCompatibility = '1.6'
-version = '0.2'
-
+sourceCompatibility = '1.7'
+version = '0.3'
 
 repositories {
-	maven {
-        url "http://repo.dotcms.com/artifactory/libs-release"
-    }
+	maven { url "http://repo.dotcms.com/artifactory/libs-release" }
 }
 
 dependencies {
-	compile (group: 'com.dotcms', name: 'dotcms', version: '2.5.1'){
-		transitive = true
+	compile('com.dotcms:dotcms:2.5.3') { transitive = true }
+	provided('javax.servlet:servlet-api:2.5')
+}
+
+buildscript {
+	repositories {
+		maven { url 'http://repo.spring.io/plugins-release' }
 	}
-	providedCompile "javax.servlet:servlet-api:2.5"
+	dependencies {
+		classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+	}
 }
 
 jar {
-    manifest {
-        name = 'ISAAC LanguageVariables'
-        symbolicName = 'nl.isaac.dotcms.languagevariables'
-        instruction 'Bundle-Vendor', 'isaac'
-        instruction 'Bundle-Description', 'ISAAC LanguageVariables Plugin'
-        instruction 'Bundle-DocURL', 'http://geekyplugins.com/dot-cms/language-variables.dot'
-        instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
-        instruction 'Import-Package', '!org.springframework.*', '*;version=0'
-    }
+	manifest {
+		name = 'ISAAC LanguageVariables'
+		symbolicName = 'nl.isaac.dotcms.languagevariables'
+		instruction 'Bundle-Vendor', 'isaac'
+		instruction 'Bundle-Description', 'ISAAC LanguageVariables Plugin'
+		instruction 'Bundle-DocURL', 'http://geekyplugins.com/dot-cms/language-variables.dot'
+		instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
+		instruction 'Import-Package', '!org.springframework.*', '*;version=0'
+	}
 } 
