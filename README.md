@@ -10,7 +10,7 @@ Changes:
 -----
 * Our Configuration is hardcoded (Maybe someday make them host fields)
 * I changed it to look at SYSTEM HOST and the Current Host when looking for Variables
-* Added the Gradle build file so it can be built with: gradle osgijar
+* Added the Gradle build file so it can be built with: gradle jar
 
 License:
 -----
