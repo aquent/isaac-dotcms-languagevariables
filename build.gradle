@@ -6,7 +6,7 @@ apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-eclipse'
 
 sourceCompatibility = '1.7'
-version = '0.3.0'
+version = '0.4.0-SNAPSHOT'
 
 repositories {
 	maven { url "http://repo.dotcms.com/artifactory/libs-release" }
