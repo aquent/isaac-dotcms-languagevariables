@@ -15,6 +15,14 @@ public class Configuration {
 		return "value";
 	}
 	
+	public static String getStructureKeyFieldLabel() {
+		return "Key";
+	}
+	
+	public static String getStructureValueFieldLabel() {
+		return "Value";
+	}
+	
 	public static boolean isValueOfKeyEmptyShowKey() {
 		return true;
 	}

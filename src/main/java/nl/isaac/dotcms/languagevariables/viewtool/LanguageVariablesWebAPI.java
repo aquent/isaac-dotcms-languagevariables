@@ -5,7 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
-import nl.isaac.dotcms.languagevariables.languageservice.ContentGlossaryAPI;
+import nl.isaac.dotcms.languagevariables.languageservice.LanguageVariablesAPI;
 import nl.isaac.dotcms.languagevariables.util.Configuration;
 import nl.isaac.dotcms.languagevariables.util.RequestUtil;
 
@@ -83,7 +83,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
       }
       
       // First try with the request's language and host
-      ContentGlossaryAPI contentGlossaryAPI = new ContentGlossaryAPI(request);
+      LanguageVariablesAPI contentGlossaryAPI = new LanguageVariablesAPI(request);
       String value = contentGlossaryAPI.getValue(key);
       if(UtilMethods.isSet(value)) {
         return value;
@@ -94,7 +94,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
       
       // Let's try same host, default language now
       if(! languageId.equals(defLang)) {
-        contentGlossaryAPI = new ContentGlossaryAPI(defLang, reqHost, live);
+        contentGlossaryAPI = new LanguageVariablesAPI(defLang, reqHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
           return value;
@@ -103,7 +103,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
       
       // Now let's try system host, request language
       if(! reqHost.equals(sysHost)) {
-        contentGlossaryAPI = new ContentGlossaryAPI(languageId, sysHost, live);
+        contentGlossaryAPI = new LanguageVariablesAPI(languageId, sysHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
         	return value;
@@ -112,7 +112,7 @@ public class LanguageVariablesWebAPI implements ViewTool {
       
       // Now let's try system host, default language
       if((! reqHost.equals(sysHost)) && (! languageId.equals(defLang))) {
-        contentGlossaryAPI = new ContentGlossaryAPI(defLang, sysHost, live);
+        contentGlossaryAPI = new LanguageVariablesAPI(defLang, sysHost, live);
         value = contentGlossaryAPI.getValue(key);
         if(UtilMethods.isSet(value)) {
         	return value;

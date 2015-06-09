@@ -13,7 +13,9 @@ repositories {
 }
 
 dependencies {
-	compile('com.dotcms:dotcms:2.5.3') { transitive = true }
+	compile('com.dotcms:dotcms:3.2') { transitive = true }
+	compile('commons-lang:commons-lang:2.6')
+	compile('commons-io:commons-io:2.4')
 	provided('javax.servlet:servlet-api:2.5')
 }
 
@@ -34,6 +36,69 @@ jar {
 		instruction 'Bundle-Description', 'ISAAC LanguageVariables Plugin'
 		instruction 'Bundle-DocURL', 'http://geekyplugins.com/dot-cms/language-variables.dot'
 		instruction 'Bundle-Activator', 'nl.isaac.dotcms.languagevariables.osgi.LanguageVariablesActivator'
-		instruction 'Import-Package', '!org.springframework.*', '*;version=0'
+		instruction 'Import-Package', 
+			'!org.springframework.*', 
+			'!org.apache.commons.lang.*',
+			'!org.apache.commons.io.*',
+			'*;version=0'
+		instruction 'Embed-Dependency', 'commons-lang', 'commons-io'
+		instruction 'Embed-Transitive', 'true'
 	}
 } 
+
+/*
+ * reads the OSGI instruction "Embed-Dependency" and "Embed-Transitive"
+ * and sets the "Bundle-ClassPath" instruction as well as copy instruction for
+ * the related artifacts accordingly
+ */
+task processEmbedded << {
+	ext.embedInstruction = jar.manifest.instructions.get("Embed-Dependency")
+	ext.transitive = jar.manifest.instructions.get("Embed-Transitive");
+	if(embedInstruction != null){
+		def includedArtifacts = [] as Set
+		getDependencies(embedInstruction,transitive).each { dependency ->
+			dependency.moduleArtifacts.each { artifact ->
+				includedArtifacts.add(artifact.file)
+			}
+		}
+		jar.manifest.instruction("Bundle-ClassPath",'.') //add the default classpath
+		includedArtifacts.each { artifact -> 
+			jar.from(artifact)
+			jar.manifest.instruction("Bundle-ClassPath",artifact.name)
+        }
+    }
+}
+
+/**
+ * Gets the list of ResolvedDependencies for the list of embeded dependency names
+ * @param embededList the list with the dependencies to embed
+ * @param recursive The embed transitive state
+ * @return the list of dependencies. An empty Set if none
+ */
+def getDependencies(embededList, recursive){
+	def dependencies = [] as Set //resolved Dependencies
+	def dependencyMap = [:]; 
+	// This only considers top level resolved dependencies, but other should 
+	// not be embeded anyway.
+	project.configurations.runtime.resolvedConfiguration.firstLevelModuleDependencies.each { dependency -> 
+		dependencyMap.put(dependency.moduleName,dependency)
+	}
+	embededList.each { embeded -> 
+		ext.dependency = dependencyMap.get(embeded)
+		if(dependency != null){
+			println "dependency "+dependency.name
+			dependencies.add(dependency)
+			if(recursive){
+				dependency.children.each { child -> 
+					println "  child "+child.name+" Parents: "+child.parents
+					dependencies.add(child) 
+				}
+			}
+		} else {
+			println "WARNING: dependency "+embeded+" not found"
+		}
+	}
+	return dependencies
+}
+
+compileJava.dependsOn processEmbedded
