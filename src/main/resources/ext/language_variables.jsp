@@ -9,7 +9,7 @@
 <%@ page import="com.liferay.portal.util.PortalUtil"%>
 <%@ page import="com.dotmarketing.business.Layout"%>
 <%@ page import="com.dotmarketing.business.UserAPI"%>
-<%@ page import="javax.portlet.WindowState"%>
+<%@ page import="com.dotcms.repackage.javax.portlet.WindowState"%>
 <%@ page import="java.util.*" %>
 <%@ page import="com.dotmarketing.portlets.languagesmanager.model.Language" %>
 <%@ page import="com.dotmarketing.portlets.structure.model.Structure" %>
@@ -20,7 +20,7 @@
 <%@ page import="com.dotmarketing.util.Config" %>
 <%@ page import="com.dotmarketing.util.UtilMethods" %>
 <%@ page import="com.dotmarketing.util.InodeUtils" %>
-<%@ page import="com.dotmarketing.cache.StructureCache"%>
+<%@ page import="com.dotmarketing.business.CacheLocator"%>
 <%@ page import="com.liferay.portal.language.LanguageUtil"%> 
 <%@ page import="com.dotmarketing.business.Role"%> 
 <%@ page import="com.dotmarketing.business.RoleAPI"%> 
@@ -32,11 +32,10 @@
 <%@ page import="com.dotmarketing.business.PermissionAPI"%>
  
 <%
- 	List<Language> languages = APILocator.getLanguageAPI().getLanguages();
-          Map lastSearch = (Map)session.getAttribute(com.dotmarketing.util.WebKeys.CONTENTLET_LAST_SEARCH);
-  		Structure structure = StructureCache.getStructureByVelocityVarName("LanguageVariables");
-          User user = null;
-      	user = PortalUtil.getUser(request);
+ 		List<Language> languages = APILocator.getLanguageAPI().getLanguages();
+        Map lastSearch = (Map)session.getAttribute(com.dotmarketing.util.WebKeys.CONTENTLET_LAST_SEARCH);
+        Structure structure = CacheLocator.getContentTypeCache().getStructureByVelocityVarName("LanguageVariables");
+        User user = PortalUtil.getUser(request);
   		Host host = WebAPILocator.getHostWebAPI().getCurrentHost(request);
           
       	String orderBy = "modDate desc";
@@ -91,20 +90,6 @@
         <div dojoType="dijit.layout.ContentPane" splitter="false" region="leading" style="width: 350px;" class="lineRight">
 
                 <div id="filterWrapper" style="overflow-y:auto; overflow-x:hidden;margin:43px 0 0 5px;">
-
-
-                        <%
-                        	List<Structure> readStructs = StructureFactory.getStructuresWithReadPermissions(user, true);
-                        %>
-                        <%
-                        	if((readStructs.size() == 0)){
-                        %>
-                                <div align="center" style="text-align:center;">
-                                        <dt><FONT COLOR="#FF0000"><%=UtilMethods.escapeSingleQuotes(LanguageUtil.get(pageContext, "No-Structure-Read-Permissions" ))%></FONT></dt>
-                                </div>
-                        <%
-                        	}
-                        %>
 
                         <!-- START Advanced Search-->
                         <div id="advancedSearch">

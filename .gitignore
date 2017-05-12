@@ -8,3 +8,5 @@ gradle.properties
 /build/classes/
 /build/resources/
 /build/tmp/
+.DS_Store
+.checkstyle

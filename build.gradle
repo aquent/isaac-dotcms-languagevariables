@@ -5,15 +5,15 @@ apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-eclipse'
 
-sourceCompatibility = '1.7'
-version = '0.3.0'
+sourceCompatibility = '1.8'
+version = '0.5.0'
 
 repositories {
 	maven { url "http://repo.dotcms.com/artifactory/libs-release" }
 }
 
 dependencies {
-	compile('com.dotcms:dotcms:2.5.3') { transitive = true }
+	compile('com.dotcms:dotcms:3.6.2')
 	provided('javax.servlet:servlet-api:2.5')
 }
 
