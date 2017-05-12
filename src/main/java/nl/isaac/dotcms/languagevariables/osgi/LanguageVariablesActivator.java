@@ -2,10 +2,10 @@ package nl.isaac.dotcms.languagevariables.osgi;
 
 import javax.servlet.ServletException;
 
-import org.quartz.CronTrigger;
-
+import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
 import nl.isaac.dotcms.languagevariables.cache.servlet.FlushVariablesCache;
 import nl.isaac.dotcms.languagevariables.languageservice.LanguagePrefixesServlet;
+import nl.isaac.dotcms.languagevariables.util.Configuration;
 import nl.isaac.dotcms.languagevariables.util.ContentletPostHook;
 import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI;
 import nl.isaac.dotcms.util.osgi.ExtendedGenericBundleActivator;
@@ -16,12 +16,11 @@ import com.dotcms.repackage.org.osgi.framework.BundleContext;
 import com.dotcms.repackage.org.osgi.framework.ServiceReference;
 import com.dotcms.repackage.org.osgi.service.http.NamespaceException;
 import com.dotcms.repackage.org.osgi.util.tracker.ServiceTracker;
-import com.dotmarketing.quartz.CronScheduledTask;
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.portlets.languagesmanager.model.Language;
 import com.dotmarketing.util.Logger;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Language Variables Activator.
@@ -37,6 +36,7 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
 
     // Default DotCMS call
     initializeServices(context);
+    publishBundleServices(context);
 
     // Add the viewtools
     addViewTool(context, LanguageVariablesWebAPI.class, "languageVariables", ViewToolScope.REQUEST);
@@ -54,16 +54,10 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
     addPostHook(new ContentletPostHook());
 
     // Clear Cache
-    Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.SECOND, 10);
-    String cacheClearCron2 = new SimpleDateFormat("ss mm H d M ? yyyy").format(cal.getTime());
-    CronScheduledTask cacheClearTask =
-        new CronScheduledTask("Cache Regions Clearing Job #2", "User Jobs",
-            "Clears the Permissions and Role Caches",
-            "com.aquent.osgi.job.CacheRegionsClearingJob", new Date(), null,
-            CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW,
-            null, cacheClearCron2);
-    scheduleQuartzJob(cacheClearTask);
+    List<Language> languages = APILocator.getLanguageAPI().getLanguages();
+    for (Language language : languages) {
+      LanguageListCacheGroupHandler.getInstance().remove(Configuration.CacheListKeysWithoutValue + language.getId());
+    }
 
     // TODO XS/MD: Add code to check if the structure is already created, otherwise WARN
   }

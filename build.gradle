@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-	compile('com.dotcms:dotcms:3.6.1') { transitive = true }
+	compile('com.dotcms:dotcms:3.6.2')
 	provided('javax.servlet:servlet-api:2.5')
 }
 
