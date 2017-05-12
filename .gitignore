@@ -9,3 +9,4 @@ gradle.properties
 /build/resources/
 /build/tmp/
 .DS_Store
+.checkstyle
