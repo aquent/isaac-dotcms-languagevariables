@@ -4,43 +4,41 @@
 <%@page import="nl.isaac.dotcms.languagevariables.languageservice.ContentGlossaryAPI"%>
 <%@page import="com.dotmarketing.portlets.contentlet.model.Contentlet"%>
 <%@page import="nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI"%>
-<%@ page import="com.dotmarketing.util.Logger"%>
-<%@ page import="com.dotmarketing.business.web.LanguageWebAPI"%>
-<%@ page import="com.liferay.portal.util.PortalUtil"%>
-<%@ page import="com.dotmarketing.business.Layout"%>
-<%@ page import="com.dotmarketing.business.UserAPI"%>
-<%@ page import="com.dotcms.repackage.javax.portlet.WindowState"%>
-<%@ page import="java.util.*" %>
-<%@ page import="com.dotmarketing.portlets.languagesmanager.model.Language" %>
-<%@ page import="com.dotmarketing.portlets.structure.model.Structure" %>
-<%@ page import="com.dotmarketing.portlets.structure.factories.StructureFactory" %>
-<%@ page import="com.liferay.portal.model.User" %>
-<%@ page import="com.dotmarketing.portlets.languagesmanager.business.*" %>
-<%@ page import="com.dotmarketing.business.APILocator" %>
-<%@ page import="com.dotmarketing.util.Config" %>
-<%@ page import="com.dotmarketing.util.UtilMethods" %>
-<%@ page import="com.dotmarketing.util.InodeUtils" %>
-<%@ page import="com.dotmarketing.business.CacheLocator"%>
-<%@ page import="com.liferay.portal.language.LanguageUtil"%> 
-<%@ page import="com.dotmarketing.business.Role"%> 
-<%@ page import="com.dotmarketing.business.RoleAPI"%> 
-<%@ page import="com.dotmarketing.business.RoleAPIImpl"%>
-<%@ page import="com.dotmarketing.portlets.folders.model.Folder"%>
-<%@ page import="com.dotmarketing.beans.Host"%>
-<%@ page import="com.dotmarketing.cache.FieldsCache"%>
-<%@ page import="com.dotmarketing.portlets.structure.model.Field"%>
-<%@ page import="com.dotmarketing.business.PermissionAPI"%>
- 
+<%@page import="com.dotmarketing.util.Logger"%>
+<%@page import="com.dotmarketing.business.web.LanguageWebAPI"%>
+<%@page import="com.liferay.portal.util.PortalUtil"%>
+<%@page import="com.dotmarketing.business.Layout"%>
+<%@page import="com.dotmarketing.business.UserAPI"%>
+<%@page import="com.dotcms.repackage.javax.portlet.WindowState"%>
+<%@page import="java.util.*" %>
+<%@page import="com.dotmarketing.portlets.languagesmanager.model.Language" %>
+<%@page import="com.dotmarketing.portlets.structure.model.Structure" %>
+<%@page import="com.liferay.portal.model.User" %>
+<%@page import="com.dotmarketing.portlets.languagesmanager.business.*" %>
+<%@page import="com.dotmarketing.business.APILocator" %>
+<%@page import="com.dotmarketing.util.Config" %>
+<%@page import="com.dotmarketing.util.UtilMethods" %>
+<%@page import="com.dotmarketing.util.InodeUtils" %>
+<%@page import="com.dotmarketing.business.CacheLocator"%>
+<%@page import="com.liferay.portal.language.LanguageUtil"%>
+<%@page import="com.dotmarketing.business.Role"%>
+<%@page import="com.dotmarketing.business.RoleAPI"%>
+<%@page import="com.dotmarketing.business.RoleAPIImpl"%>
+<%@page import="com.dotmarketing.portlets.folders.model.Folder"%>
+<%@page import="com.dotmarketing.beans.Host"%>
+<%@page import="com.dotmarketing.cache.FieldsCache"%>
+<%@page import="com.dotmarketing.business.PermissionAPI"%>
+
 <%
  		List<Language> languages = APILocator.getLanguageAPI().getLanguages();
         Map lastSearch = (Map)session.getAttribute(com.dotmarketing.util.WebKeys.CONTENTLET_LAST_SEARCH);
         Structure structure = CacheLocator.getContentTypeCache().getStructureByVelocityVarName("LanguageVariables");
         User user = PortalUtil.getUser(request);
   		Host host = WebAPILocator.getHostWebAPI().getCurrentHost(request);
-          
+
       	String orderBy = "modDate desc";
       	int currpage = 1;
-      	
+
       	Language selectedLanguage = new Language();
           Language defaultLang = APILocator.getLanguageAPI().getDefaultLanguage();
           String languageId = String.valueOf(defaultLang.getId());
@@ -48,11 +46,11 @@
               selectedLanguage = (Language)request.getAttribute(com.dotmarketing.util.WebKeys.LANGUAGE_SEARCHED);
           }
           long selectedLanguageId = selectedLanguage.getId();
-          
+
           boolean showDeleted = false;
           boolean filterSystemHost = false;
           boolean filterLocked = false;
-          
+
           java.util.Map params = new java.util.HashMap();
   		String referer = com.dotmarketing.util.PortletURLUtil.getActionURL(request,WindowState.MAXIMIZED.toString(),params);
  %>
@@ -117,7 +115,7 @@
 										String imageURL="/html/images/languages/all.gif";
 									    String style="background-image:url(URLHERE);width:16px;height:11px;display:inline-block;vertical-align:middle;margin:3px 5px 3px 2px;";
 										buff.append("{id:'0',value:'',lang:'All',imageurl:'"+imageURL+"',label:'<span style=\""+style.replaceAll("URLHERE",imageURL)+"\"></span>All'}");
-												
+
 										for (Language lang : languages) {
 										    imageURL="/html/images/languages/" + lang.getLanguageCode()  + "_" + lang.getCountryCode() +".gif";
 											final String display=lang.getLanguage() + " - " + lang.getCountry().trim();
@@ -127,7 +125,7 @@
 											buff.append("lang:'"+display+"',");
 											buff.append("label:'<span style=\""+style.replaceAll("URLHERE",imageURL)+"\"></span>"+display+"'}");
 										}
-												    
+
 										buff.append("]}");%>
 
 										function updateSelectBoxImage(myselect) {
@@ -142,7 +140,7 @@
 
 										var storeData=<%=buff.toString()%>;
 										var langStore = new dojo.data.ItemFileReadStore({data: storeData});
-											
+
 										var myselect = new dijit.form.FilteringSelect({
 											id: "language_id",
 											name: "language_id",
@@ -158,7 +156,7 @@
 											},
 											labelFunc: function(item, store) { return store.getValue(item, "label"); }
 										},
-											
+
 										dojo.byId("language_id"));
 
 										<%if(languageId.equals("0")) {%>
@@ -168,7 +166,7 @@
 										<%}%>
 
 									</script>
-									
+
                                 </dd>
 								</dl>
 								<div class="clear"></div>
@@ -224,10 +222,10 @@
 		<input type="hidden" name="allUncheckedContentsInodes" id="allUncheckedContentsInodes" value=""/>
 		<input type="hidden" name="folderField" id="folderField" value=""/>
 		<input type="hidden" name="language_id" value="0">
-		
+
 		<div id="metaMatchingResultsDiv" style="display:none;padding-top:7px;">
 			<!-- START Listing Results -->
-			<input type="hidden" name="referer" value="<%=referer%>"> 
+			<input type="hidden" name="referer" value="<%=referer%>">
 			<input type="hidden" name="cmd" value="prepublish">
 			<div id="matchingResultsDiv" style="display: none"></div>
 			<table id="results_table" class="listingTable"></table>
@@ -236,17 +234,17 @@
 			<!-- END Listing Results -->
 		</div>
 		<!-- END Pagination -->
-	
+
 		<!-- START Listing Results -->
 		<table class="listingTable" >
-			<tr>	
+			<tr>
 				<th width="25%">
 				</th>
 				<th width="75%">
 					<input type="checkbox" dojoType="dijit.form.CheckBox" name="checkAll" id="checkAll" onclick="checkUncheckAll()"> <%=LanguageUtil.get(pageContext, "Key")%>
 				</th>
 			</tr>
-	 
+
 			<%
 	 				ContentGlossaryAPI languageAPI = new ContentGlossaryAPI();
 	 				 					int count = 0;
@@ -274,7 +272,7 @@
 						<span class="archivedIcon"></span>
 					<%
 						} else {
-					%> 
+					%>
 						<span class="greyDotIcon"></span>
 					<%
 						} if(contentlet.isLocked()){
@@ -286,15 +284,14 @@
 				</td>
 				<td> <input dojoType="dijit.form.CheckBox" type="checkbox" name="publishInode" id="checkbox<%=count%>" value="<%=contentlet.getInode()%>" onClick="togglePublish();updateUnCheckedList('<%=contentlet.getInode()%>','checkbox<%=count%>')" /><%=contentlet.getStringProperty("key")%></td>
 			</tr>
-			
+
 			<%
 							}
-						%> 
+						%>
 		</table>
 	<!-- END Listing Results -->
-		</form> <!-- END Form -->	
+		</form> <!-- END Form -->
 	</div>
-	
 	<div class="clear"></div>
 
 	<!-- START Buton Row -->
@@ -339,7 +336,7 @@
 
 <!-- START Right Column -->
 <div dojoType="dijit.layout.ContentPane" splitter="false" region="center">
-		
+
 	<div id="contentWrapper" style="overflow-y:auto; overflow-x:hidden;margin:35px 0 0 0;">
 		<%
 			LanguageVariablesWebAPI languageviewtool = new LanguageVariablesWebAPI();
@@ -383,7 +380,7 @@
 					</div>
 					<div style="clear:both;"></div>
 				</div>
-					
+
 			<% }//end for %>
 		</div>
 		<!-- END Table Results -->
@@ -393,10 +390,10 @@
 
 <!-- END Listing Table -->
 	<div class="clear"></div>
-			
+
 	<!-- START Buton Row -->
     <div class="buttonRow">
-						
+
 		<div id="rightArchiveButtonDiv" style="display:none">
 			<button dojoType="dijit.form.Button" id="unArchiveButton" onClick="unarchiveContentlet()" iconClass="unarchiveIconDis" disabled="true" >
 				<%= UtilMethods.escapeSingleQuotes(LanguageUtil.get(pageContext, "Un-Archive")) %>
@@ -426,7 +423,7 @@
 			</button>
         </div>
     </div>
-	
+
     <!-- END Buton Row -->
 </div>
 <!-- END Right Column -->
@@ -436,36 +433,35 @@
 <script type="text/javascript">
 
 
-	var myHandler_oldOnload = window.onload;  
-	function myHandler()  
-	{  
+	var myHandler_oldOnload = window.onload;
+	function myHandler() {
 		var box0 = dijit.byId("keyTextBox");
 		dojo.connect(box0, "onChange", "filterKeyList");
-		
+
 		var select0 = dijit.byId("language_id");
 		dojo.connect(select0, "onChange", "selectMissingValues");
-		
-		if(myHandler_oldOnload)myHandler_oldOnload();  
+
+		if(myHandler_oldOnload)myHandler_oldOnload();
 	}  
-	window.onload = function(){myHandler();}  
+	window.onload = function(){myHandler();}
 
     <!-- START Functions for left screen -->
 
     <!-- Filter list on key -->
-    function filterKeyList(){
-		var textbox = dijit.byId("keyTextBox"); 
+    function filterKeyList() {
+		var textbox = dijit.byId("keyTextBox");
 		console.log("Filter key list: " + textbox.get("value"));
-	}  
-	
+	}
+
 	<!-- Filter list on missing values per language id -->
 	<!-- Value of selectbox is Language id -->
 	function selectMissingValues() {
-		var selectBox = dijit.byId("language_id"); 
+		var selectBox = dijit.byId("language_id");
 		console.log("Filter key list: " + selectBox.get("value"));
-	}  
-	
+	}
+
 	<!-- END Functions for left screen -->
-	
+
 	<!-- START Functions for center screen -->
 	<!-- Publish selected contentlets from the center screen  -->
 	function publishSelectedContentlets () {
@@ -498,8 +494,8 @@
         form.action+= "&structure_id=<%=structure.getInode()%>";
         form.action += "&selected_lang=0";
         submitForm(form);
-	} 
-	
+	}
+
 	<!-- Unarchive selected contentlets from the center screen -->
 	function unArchiveSelectedContentlets() {
 		disableButtonRow();
@@ -509,8 +505,8 @@
         form.action+= "&structure_id=<%=structure.getInode()%>";
         form.action += "&selected_lang=0";
         submitForm(form);
-	} 
-	
+	}
+
 	<!-- Delete selected contentlets from the center screen -->
 	function deleteSelectedContentlets(){
 		disableButtonRow();
@@ -522,7 +518,7 @@
             submitForm(form);
         }
     }
-	
+
 	<!-- Get language values for the right screen -->
     function viewLanguageValues(key, archived){
 	if (archived) {
@@ -532,57 +528,56 @@
         document.getElementById("rightArchiveButtonDiv").style.display="none";
         document.getElementById("rightUnArchiveButtonDiv").style.display="";
     }
-		
+
 	dijit.byId(hiddenKey).value = key;
 		<% for(Language language : languages) { %>
 
-			LanguageAPI.getStringKey(<%=language.getId()%>, key, { 
-                   callback : function(str) { 
+			LanguageAPI.getStringKey(<%=language.getId()%>, key, {
+                   callback : function(str) {
 				   	dijit.byId(textArea<%=language.getLanguageCode() %>_<%=language.getCountryCode() %>).value = str;
-                   } 
+                   }
                  });
-		<% } %>   	
+		<% } %>
     }
-		
+
 	function disableButtonRow() {
-        
+
         if(dijit.byId("unArchiveButton"))
             dijit.byId("unArchiveButton").attr("disabled", true);
-                        
+
         if(dijit.byId("deleteButton"))
             dijit.byId("deleteButton").attr("disabled", true);
-                        
+
         if(dijit.byId("archiveReindexButton"))
             dijit.byId("archiveReindexButton").attr("disabled", true);
-                        
+
         if(dijit.byId("archiveUnlockButton"))
             dijit.byId("archiveUnlockButton").attr("disabled", true);
-                        
+
         if(dijit.byId("publishButton"))
             dijit.byId("publishButton").attr("disabled", true);
-                        
+
         if(dijit.byId("unPublishButton"))
             dijit.byId("unPublishButton").attr("disabled", true);
-                        
+
         if(dijit.byId("archiveButton"))
             dijit.byId("archiveButton").attr("disabled", true);
-                        
+
         if(dijit.byId("reindexButton"))
             dijit.byId("reindexButton").attr("disabled", true);
-                        
+
         if(dijit.byId("unlockButton"))
-            dijit.byId("unlockButton").attr("disabled", true);            
+            dijit.byId("unlockButton").attr("disabled", true);
         }
-		
+
 	function displayArchiveButton(){
 
-		LanguageAPI.getAllUniqueKeys({ 
-            callback : function(str) { 
+		LanguageAPI.getAllUniqueKeys({
+            callback : function(str) {
 			   	console.log("str: " + str);
-            } 
+            }
           });
 
-		
 		var showArchive = document.getElementById("showDeletedCB").checked;
         if (showArchive) {
             document.getElementById("archiveButtonDiv").style.display="";
@@ -593,20 +588,20 @@
         }
         togglePublish();
     }
-	
+
 	function checkUncheckAll() {
 		var checkAll = dijit.byId("checkAll");
-		var check;              
-		
+		var check;
+
 		togglePublish();
 	}
 		<!--	for (var i = 0; i <= ContentletsLIst; ++i) { -->
 		<!--		check = dijit.byId("checkbox" + i); -->
 		<!--		if(check) { -->
 		<!--			check.setChecked(checkAll.checked); -->
-		<!--		}	 -->			
+		<!--		}	 -->
 		<!--	} -->
-	
+
 	function togglePublish(){
         var cbArray = document.getElementsByName("publishInode");
         var showArchive = document.getElementById("showDeletedCB").checked;
@@ -625,13 +620,13 @@
 						dijit.byId('publishButton').setAttribute("disabled", false),
 						dijit.byId('unPublishButton').setAttribute("disabled", false),
                     ]);
-				}       
+				}
 				break;
 			}
-                 
+
 			if (showArchive) {
 				disableFields([
-					dijit.byId("unArchiveButton").setAttribute("disabled", true),                                           
+					dijit.byId("unArchiveButton").setAttribute("disabled", true),
 					dijit.byId("deleteButton").setAttribute("disabled", true),
 				]);
 			} else {
@@ -643,40 +638,40 @@
 			}
 		}
     }
-	
-	function updateUnCheckedList(inode,checkId){    
-                                       
+
+	function updateUnCheckedList(inode,checkId){
+
 		if(!document.getElementById(checkId).checked){
             unCheckedInodes = document.getElementById('allUncheckedContentsInodes').value;
-                                
+
 			if(unCheckedInodes == "")
 				unCheckedInodes = inode;
 			else
-				unCheckedInodes = unCheckedInodes + ","+ inode;                         
+				unCheckedInodes = unCheckedInodes + ","+ inode;
 		} else{
 			unCheckedInodes = unCheckedInodes.replace(inode,"-");
 		}
 		document.getElementById('allUncheckedContentsInodes').value = unCheckedInodes;
 	}
 	<!-- END Functions for center screen -->
-    
+
 	<!-- START Functions for right screen -->
 	function publishContentlet () {
 		publishContent(true);
 	}
-	
+
 	function unpublishContentlet () {
 		publishContent(false);
 	}
-	
+
 	function archiveContentlet () {
 		archiveContent(true);
 	}
-	
+
 	function unarchiveContentlet () {
 		archiveContent(false);
 	}
-	
+
 	function publishContent(publish) {
 		var languageArray = new Array(<%=APILocator.getLanguageAPI().getLanguages().size()%>);
 		var languagesCount = 0;
@@ -684,7 +679,7 @@
 		var key = dojo.byId(hiddenKey).value;
 		if(!key){
 			alert("Please select a key!");
-			return;			
+			return;
 		}
 		<% for(Language language : languages) { %>
 			languageArray [languagesCount] = new Array(2);
@@ -692,10 +687,10 @@
 			languageArray [languagesCount][1] = dojo.byId(textArea<%=language.getLanguageCode() %>_<%=language.getCountryCode() %>).value;
 			languagesCount++;
 		<% } %>
-		
+
 		LanguageAPI.publishContentlet(key, languageArray, publish);
 	}
-	
+
 	function archiveContent(archive) {
 		var languageArray = new Array(<%=APILocator.getLanguageAPI().getLanguages().size()%>);
 		var languagesCount = 0;
@@ -703,7 +698,7 @@
 		var key = dojo.byId(hiddenKey).value;
 		if(!key){
 			alert("Please select a key!");
-			return;			
+			return;
 		}
 		<% for(Language language : languages) { %>
 			languageArray [languagesCount] = new Array(2);
@@ -715,7 +710,7 @@
 	}
 
 	<!-- END Functions for right screen -->
-	
+
 	function getSelectedLanguageId () {
 		var obj=dijit.byId('language_id');
 		if(!obj)

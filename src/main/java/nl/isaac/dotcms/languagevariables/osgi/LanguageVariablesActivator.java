@@ -1,6 +1,18 @@
 package nl.isaac.dotcms.languagevariables.osgi;
 
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.portlets.languagesmanager.model.Language;
+import com.dotmarketing.util.Logger;
+
+import java.util.List;
+
 import javax.servlet.ServletException;
+
+import org.apache.felix.http.api.ExtHttpService;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.NamespaceException;
+import org.osgi.util.tracker.ServiceTracker;
 
 import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
 import nl.isaac.dotcms.languagevariables.cache.servlet.FlushVariablesCache;
@@ -10,17 +22,6 @@ import nl.isaac.dotcms.languagevariables.util.ContentletPostHook;
 import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI;
 import nl.isaac.dotcms.util.osgi.ExtendedGenericBundleActivator;
 import nl.isaac.dotcms.util.osgi.ViewToolScope;
-
-import com.dotcms.repackage.org.apache.felix.http.api.ExtHttpService;
-import com.dotcms.repackage.org.osgi.framework.BundleContext;
-import com.dotcms.repackage.org.osgi.framework.ServiceReference;
-import com.dotcms.repackage.org.osgi.service.http.NamespaceException;
-import com.dotcms.repackage.org.osgi.util.tracker.ServiceTracker;
-import com.dotmarketing.business.APILocator;
-import com.dotmarketing.portlets.languagesmanager.model.Language;
-import com.dotmarketing.util.Logger;
-
-import java.util.List;
 
 /**
  * Language Variables Activator.
