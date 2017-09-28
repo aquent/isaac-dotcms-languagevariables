@@ -1,6 +1,9 @@
 package nl.isaac.dotcms.languagevariables.osgi;
 
+import com.dotcms.repackage.org.apache.logging.log4j.LogManager;
+import com.dotcms.repackage.org.apache.logging.log4j.core.LoggerContext;
 import com.dotmarketing.business.APILocator;
+import com.dotmarketing.loggers.Log4jUtil;
 import com.dotmarketing.portlets.languagesmanager.model.Language;
 import com.dotmarketing.util.Logger;
 
@@ -31,9 +34,14 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
   private LanguagePrefixesServlet languagePrefixesServlet;
   private FlushVariablesCache languageFlushServlet;
   private ServiceTracker<ExtHttpService, ExtHttpService> tracker;
+  private LoggerContext pluginLoggerContext;
 
   @Override
   public void start(BundleContext context) throws Exception {
+    // Setup Logger
+    LoggerContext dotcmsLoggerContext = Log4jUtil.getLoggerContext();
+    pluginLoggerContext = (LoggerContext) LogManager.getContext(this.getClass().getClassLoader(),
+        false, dotcmsLoggerContext, dotcmsLoggerContext.getConfigLocation());
 
     // Default DotCMS call
     initializeServices(context);
@@ -102,8 +110,10 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
 
   @Override
   public void stop(BundleContext context) throws Exception {
-    unpublishBundleServices();
     unregisterViewToolServices();
+    unpublishBundleServices();
+    unregisterServices(context);
+    Log4jUtil.shutdown(pluginLoggerContext);
   }
 
 }
