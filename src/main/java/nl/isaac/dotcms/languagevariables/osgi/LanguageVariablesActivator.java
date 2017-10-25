@@ -1,6 +1,23 @@
 package nl.isaac.dotcms.languagevariables.osgi;
 
+import com.dotcms.repackage.org.apache.logging.log4j.LogManager;
+import com.dotcms.repackage.org.apache.logging.log4j.core.LoggerContext;
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.business.CacheLocator;
+import com.dotmarketing.business.DotCacheAdministrator;
+import com.dotmarketing.loggers.Log4jUtil;
+import com.dotmarketing.portlets.languagesmanager.model.Language;
+import com.dotmarketing.util.Logger;
+
+import java.util.List;
+
 import javax.servlet.ServletException;
+
+import org.apache.felix.http.api.ExtHttpService;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.NamespaceException;
+import org.osgi.util.tracker.ServiceTracker;
 
 import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
 import nl.isaac.dotcms.languagevariables.cache.servlet.FlushVariablesCache;
@@ -11,17 +28,6 @@ import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI;
 import nl.isaac.dotcms.util.osgi.ExtendedGenericBundleActivator;
 import nl.isaac.dotcms.util.osgi.ViewToolScope;
 
-import com.dotcms.repackage.org.apache.felix.http.api.ExtHttpService;
-import com.dotcms.repackage.org.osgi.framework.BundleContext;
-import com.dotcms.repackage.org.osgi.framework.ServiceReference;
-import com.dotcms.repackage.org.osgi.service.http.NamespaceException;
-import com.dotcms.repackage.org.osgi.util.tracker.ServiceTracker;
-import com.dotmarketing.business.APILocator;
-import com.dotmarketing.portlets.languagesmanager.model.Language;
-import com.dotmarketing.util.Logger;
-
-import java.util.List;
-
 /**
  * Language Variables Activator.
  */
@@ -30,9 +36,14 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
   private LanguagePrefixesServlet languagePrefixesServlet;
   private FlushVariablesCache languageFlushServlet;
   private ServiceTracker<ExtHttpService, ExtHttpService> tracker;
+  private LoggerContext pluginLoggerContext;
 
   @Override
   public void start(BundleContext context) throws Exception {
+    // Setup Logger
+    LoggerContext dotcmsLoggerContext = Log4jUtil.getLoggerContext();
+    pluginLoggerContext = (LoggerContext) LogManager.getContext(this.getClass().getClassLoader(),
+        false, dotcmsLoggerContext, dotcmsLoggerContext.getConfigLocation());
 
     // Default DotCMS call
     initializeServices(context);
@@ -53,11 +64,9 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
     // Register hook
     addPostHook(new ContentletPostHook());
 
-    // Clear Cache
-    List<Language> languages = APILocator.getLanguageAPI().getLanguages();
-    for (Language language : languages) {
-      LanguageListCacheGroupHandler.getInstance().remove(Configuration.CacheListKeysWithoutValue + language.getId());
-    }
+    // Flush the cache
+    DotCacheAdministrator cache = CacheLocator.getCacheAdministrator();
+    cache.flushAll();
 
     // TODO XS/MD: Add code to check if the structure is already created, otherwise WARN
   }
@@ -101,8 +110,10 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
 
   @Override
   public void stop(BundleContext context) throws Exception {
-    unpublishBundleServices();
     unregisterViewToolServices();
+    unpublishBundleServices();
+    unregisterServices(context);
+    Log4jUtil.shutdown(pluginLoggerContext);
   }
 
 }

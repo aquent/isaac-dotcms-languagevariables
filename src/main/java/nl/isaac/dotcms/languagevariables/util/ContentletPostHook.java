@@ -1,23 +1,20 @@
 package nl.isaac.dotcms.languagevariables.util;
 
+import com.dotcms.contenttype.model.type.ContentType;
+import com.dotmarketing.beans.Permission;
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.portlets.categories.model.Category;
+import com.dotmarketing.portlets.contentlet.business.ContentletAPIPostHookAbstractImp;
+import com.dotmarketing.portlets.contentlet.model.Contentlet;
+import com.dotmarketing.portlets.structure.model.ContentletRelationships;
+import com.dotmarketing.portlets.structure.model.Relationship;
+import com.dotmarketing.util.Logger;
+import com.liferay.portal.model.User;
+
 import java.util.List;
 import java.util.Map;
 
 import nl.isaac.dotcms.languagevariables.cache.LanguageVariablesCacheCleaner;
-
-import com.dotmarketing.beans.Permission;
-import com.dotmarketing.business.APILocator;
-import com.dotmarketing.exception.DotDataException;
-import com.dotmarketing.portlets.categories.model.Category;
-import com.dotmarketing.portlets.contentlet.business.ContentletAPI;
-import com.dotmarketing.portlets.contentlet.business.ContentletAPIPostHookAbstractImp;
-import com.dotmarketing.portlets.contentlet.model.Contentlet;
-import com.dotmarketing.portlets.languagesmanager.business.LanguageAPI;
-import com.dotmarketing.portlets.structure.model.ContentletRelationships;
-import com.dotmarketing.portlets.structure.model.Relationship;
-import com.dotmarketing.portlets.structure.model.Structure;
-import com.dotmarketing.util.Logger;
-import com.liferay.portal.model.User;
 
 public class ContentletPostHook extends ContentletAPIPostHookAbstractImp{
 
@@ -83,17 +80,15 @@ public class ContentletPostHook extends ContentletAPIPostHookAbstractImp{
 	
 	private void handleContentlet(Contentlet newContentlet) {
 
-		LanguageAPI languageAPI = APILocator.getLanguageAPI();
-		Structure structure = newContentlet.getStructure();
-		User systemUser;
-		try {
-			systemUser = APILocator.getUserAPI().getSystemUser();
-		} catch (DotDataException e2) {
-			throw new RuntimeException(e2.toString(), e2);
-		}
+	  ContentType conType = null;
+	  try {
+	    conType = APILocator.getContentTypeAPI(APILocator.getUserAPI().getSystemUser()).find(newContentlet.getContentTypeId());
+	  } catch (Exception e) {
+	    Logger.error(this, "Unable to get the content type from: " + newContentlet.getContentTypeId(), e);
+	    return;
+	  }
 		
-		if(structure.getVelocityVarName().equals(Configuration.getStructureVelocityVarName())) {
-			ContentletAPI contentletAPI = APILocator.getContentletAPI();
+		if(conType.variable().equals(Configuration.getStructureVelocityVarName())) {
 			String propertyKey = newContentlet.getStringProperty("key");
 			String hostIdentifier = newContentlet.getHost();
 			String languageId = String.valueOf(newContentlet.getLanguageId());

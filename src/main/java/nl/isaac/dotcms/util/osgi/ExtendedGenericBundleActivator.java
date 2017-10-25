@@ -1,6 +1,12 @@
 package nl.isaac.dotcms.util.osgi;
 
 
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.exception.DotDataException;
+import com.dotmarketing.osgi.GenericBundleActivator;
+import com.dotmarketing.portlets.languagesmanager.model.Language;
+import com.dotmarketing.util.Logger;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -10,13 +16,7 @@ import java.util.PropertyResourceBundle;
 import java.util.Set;
 
 import org.apache.velocity.tools.view.context.ViewContext;
-
-import com.dotcms.repackage.org.osgi.framework.BundleContext;
-import com.dotmarketing.business.APILocator;
-import com.dotmarketing.exception.DotDataException;
-import com.dotmarketing.osgi.GenericBundleActivator;
-import com.dotmarketing.portlets.languagesmanager.model.Language;
-import com.dotmarketing.util.Logger;
+import org.osgi.framework.BundleContext;
 
 /**
  * Provides a convenience method for adding viewtools.
