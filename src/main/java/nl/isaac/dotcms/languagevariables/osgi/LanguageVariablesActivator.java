@@ -3,6 +3,8 @@ package nl.isaac.dotcms.languagevariables.osgi;
 import com.dotcms.repackage.org.apache.logging.log4j.LogManager;
 import com.dotcms.repackage.org.apache.logging.log4j.core.LoggerContext;
 import com.dotmarketing.business.APILocator;
+import com.dotmarketing.business.CacheLocator;
+import com.dotmarketing.business.DotCacheAdministrator;
 import com.dotmarketing.loggers.Log4jUtil;
 import com.dotmarketing.portlets.languagesmanager.model.Language;
 import com.dotmarketing.util.Logger;
@@ -62,11 +64,9 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
     // Register hook
     addPostHook(new ContentletPostHook());
 
-    // Clear Cache
-    List<Language> languages = APILocator.getLanguageAPI().getLanguages();
-    for (Language language : languages) {
-      LanguageListCacheGroupHandler.getInstance().remove(Configuration.CacheListKeysWithoutValue + language.getId());
-    }
+    // Flush the cache
+    DotCacheAdministrator cache = CacheLocator.getCacheAdministrator();
+    cache.flushAll();
 
     // TODO XS/MD: Add code to check if the structure is already created, otherwise WARN
   }
