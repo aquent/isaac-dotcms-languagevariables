@@ -1,32 +1,24 @@
 package nl.isaac.dotcms.languagevariables.osgi;
 
-import com.dotcms.repackage.org.apache.logging.log4j.LogManager;
-import com.dotcms.repackage.org.apache.logging.log4j.core.LoggerContext;
-import com.dotmarketing.business.APILocator;
+import javax.servlet.ServletException;
+
 import com.dotmarketing.business.CacheLocator;
 import com.dotmarketing.business.DotCacheAdministrator;
 import com.dotmarketing.loggers.Log4jUtil;
-import com.dotmarketing.portlets.languagesmanager.model.Language;
 import com.dotmarketing.util.Logger;
-
-import java.util.List;
-
-import javax.servlet.ServletException;
-
-import org.apache.felix.http.api.ExtHttpService;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.NamespaceException;
-import org.osgi.util.tracker.ServiceTracker;
-
-import nl.isaac.dotcms.languagevariables.cache.LanguageListCacheGroupHandler;
 import nl.isaac.dotcms.languagevariables.cache.servlet.FlushVariablesCache;
 import nl.isaac.dotcms.languagevariables.languageservice.LanguagePrefixesServlet;
-import nl.isaac.dotcms.languagevariables.util.Configuration;
 import nl.isaac.dotcms.languagevariables.util.ContentletPostHook;
 import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI;
 import nl.isaac.dotcms.util.osgi.ExtendedGenericBundleActivator;
 import nl.isaac.dotcms.util.osgi.ViewToolScope;
+import org.apache.felix.http.api.ExtHttpService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.NamespaceException;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Language Variables Activator.
@@ -43,7 +35,7 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
     // Setup Logger
     LoggerContext dotcmsLoggerContext = Log4jUtil.getLoggerContext();
     pluginLoggerContext = (LoggerContext) LogManager.getContext(this.getClass().getClassLoader(),
-        false, dotcmsLoggerContext, dotcmsLoggerContext.getConfigLocation());
+                                                                false, dotcmsLoggerContext, dotcmsLoggerContext.getConfigLocation());
 
     // Default DotCMS call
     initializeServices(context);
