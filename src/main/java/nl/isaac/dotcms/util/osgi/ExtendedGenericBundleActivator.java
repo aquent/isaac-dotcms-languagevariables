@@ -1,12 +1,6 @@
 package nl.isaac.dotcms.util.osgi;
 
 
-import com.dotmarketing.business.APILocator;
-import com.dotmarketing.exception.DotDataException;
-import com.dotmarketing.osgi.GenericBundleActivator;
-import com.dotmarketing.portlets.languagesmanager.model.Language;
-import com.dotmarketing.util.Logger;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -15,7 +9,11 @@ import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.Set;
 
-import org.apache.velocity.tools.view.context.ViewContext;
+import com.dotmarketing.business.APILocator;
+import com.dotmarketing.exception.DotDataException;
+import com.dotmarketing.osgi.GenericBundleActivator;
+import com.dotmarketing.portlets.languagesmanager.model.Language;
+import com.dotmarketing.util.Logger;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,30 +27,6 @@ public abstract class ExtendedGenericBundleActivator extends GenericBundleActiva
 	protected void initializeServices(BundleContext context) throws Exception {
 		super.initializeServices(context);
 	}
-
-	protected void addViewTool(BundleContext context, Class<?> viewtoolClass, String key, ViewToolScope scope) {
-		OSGiSafeServletToolInfo viewtool = new OSGiSafeServletToolInfo();
-		viewtool.setClassname(viewtoolClass);
-		viewtool.setKey(key);
-		switch (scope) {
-		case APPLICATION:
-			viewtool.setScope(ViewContext.APPLICATION);
-			break;
-		case REQUEST:
-			viewtool.setScope(ViewContext.REQUEST);
-			break;
-		case RESPONSE:
-			viewtool.setScope(ViewContext.RESPONSE);
-			break;
-		case SESSION:
-			viewtool.setScope(ViewContext.SESSION);
-			break;
-		default:
-			throw new RuntimeException("Unknown viewtoolscope: " + scope);
-		}
-		registerViewToolService(context, viewtool);
-	}
-	
 
 	protected void registerLanguageVariables(Map<String, String> languageVariables, Language language) {
 		Map<String, String> emptyMap = new HashMap<String, String>();

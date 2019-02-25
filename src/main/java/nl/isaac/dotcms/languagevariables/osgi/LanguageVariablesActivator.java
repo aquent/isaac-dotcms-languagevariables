@@ -1,23 +1,18 @@
 package nl.isaac.dotcms.languagevariables.osgi;
 
-import javax.servlet.ServletException;
-
 import com.dotmarketing.business.CacheLocator;
 import com.dotmarketing.business.DotCacheAdministrator;
 import com.dotmarketing.loggers.Log4jUtil;
-import com.dotmarketing.util.Logger;
 import nl.isaac.dotcms.languagevariables.cache.servlet.FlushVariablesCache;
 import nl.isaac.dotcms.languagevariables.languageservice.LanguagePrefixesServlet;
 import nl.isaac.dotcms.languagevariables.util.ContentletPostHook;
-import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebAPI;
+import nl.isaac.dotcms.languagevariables.viewtool.LanguageVariablesWebApiInfo;
 import nl.isaac.dotcms.util.osgi.ExtendedGenericBundleActivator;
-import nl.isaac.dotcms.util.osgi.ViewToolScope;
 import org.apache.felix.http.api.ExtHttpService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -27,7 +22,8 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
 
   private LanguagePrefixesServlet languagePrefixesServlet;
   private FlushVariablesCache languageFlushServlet;
-  private ServiceTracker<ExtHttpService, ExtHttpService> tracker;
+  private ServiceTracker tracker;
+  private ExtHttpService httpService;
   private LoggerContext pluginLoggerContext;
 
   @Override
@@ -39,10 +35,9 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
 
     // Default DotCMS call
     initializeServices(context);
-    publishBundleServices(context);
 
     // Add the viewtools
-    addViewTool(context, LanguageVariablesWebAPI.class, "languageVariables", ViewToolScope.REQUEST);
+    registerViewToolService(context, new LanguageVariablesWebApiInfo());
 
     // Register the portlets
     registerPortlets(context, new String[] { "conf/portlet.xml", "conf/liferay-portlet.xml"});
@@ -69,42 +64,42 @@ public class LanguageVariablesActivator extends ExtendedGenericBundleActivator {
    * @param context
    */
   private void registerServlets(BundleContext context) {
-    tracker = new ServiceTracker<ExtHttpService, ExtHttpService>(context, ExtHttpService.class, null) {
-      @Override public ExtHttpService addingService(ServiceReference<ExtHttpService> reference) {
-        ExtHttpService extHttpService = super.addingService(reference);
-
+    tracker = new ServiceTracker(context, ExtHttpService.class.getName(), null);
+    ServiceReference sRef = context.getServiceReference(ExtHttpService.class.getName());
+    if (sRef != null) {
+      tracker.addingService(sRef);
+      httpService = (ExtHttpService) context.getService(sRef);
+      try {
         languagePrefixesServlet = new LanguagePrefixesServlet();
         languageFlushServlet = new FlushVariablesCache();
 
-        try {
-
-          extHttpService.registerServlet("/servlets/glossary/prefixes", languagePrefixesServlet, null, null);
-          extHttpService.registerServlet("/servlets/languagevariables/portlet/flush", languageFlushServlet, null, null);
-
-        } catch (ServletException e) {
-          throw new RuntimeException("Failed to register servlets", e);
-        } catch (NamespaceException e) {
-          throw new RuntimeException("Failed to register servlets", e);
-        }
-
-        Logger.info(this, "Registered prefixes and languageFlush servlet");
-
-        return extHttpService;
+        httpService.registerServlet("/servlets/glossary/prefixes", languagePrefixesServlet, null, null);
+        httpService.registerServlet("/servlets/languagevariables/portlet/flush", languageFlushServlet, null, null);
+      } catch (Exception e) {
+        throw new RuntimeException("Failed to register servlets", e);
       }
-      @Override public void removedService(ServiceReference<ExtHttpService> reference, ExtHttpService extHttpService) {
-        extHttpService.unregisterServlet(languagePrefixesServlet);
-        extHttpService.unregisterServlet(languageFlushServlet);
-        super.removedService(reference, extHttpService);
-      }
-    };
+    }
     tracker.open();
   }
 
   @Override
   public void stop(BundleContext context) throws Exception {
+    // Unregister the servlets
+    if (httpService != null && languagePrefixesServlet != null) {
+      httpService.unregisterServlet(languagePrefixesServlet);
+    }
+    if (httpService != null && languageFlushServlet != null) {
+      httpService.unregisterServlet(languageFlushServlet);
+    }
+    tracker.close();
+
+    // Unregister the viewtool
     unregisterViewToolServices();
-    unpublishBundleServices();
+
+    //Unregister all the bundle services
     unregisterServices(context);
+
+    // Shutdown the logger
     Log4jUtil.shutdown(pluginLoggerContext);
   }
 
