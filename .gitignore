@@ -2,11 +2,13 @@
 /bin/
 .classpath
 .gradle/
+.idea/
 .project
 .settings/
 gradle.properties
 /build/classes/
 /build/resources/
+/build/osgi-classes/
 /build/tmp/
 .DS_Store
 .checkstyle

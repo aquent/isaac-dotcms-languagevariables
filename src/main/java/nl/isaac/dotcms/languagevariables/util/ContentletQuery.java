@@ -3,6 +3,7 @@ package nl.isaac.dotcms.languagevariables.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dotcms.rendering.velocity.viewtools.content.util.ContentUtils;
 import com.dotmarketing.beans.Host;
 import com.dotmarketing.business.APILocator;
 import com.dotmarketing.exception.DotDataException;
@@ -13,7 +14,6 @@ import com.dotmarketing.portlets.languagesmanager.model.Language;
 import com.dotmarketing.util.Logger;
 import com.dotmarketing.util.PaginatedArrayList;
 import com.dotmarketing.util.UtilMethods;
-import com.dotmarketing.viewtools.content.util.ContentUtils;
 
 /**
  * Provides functionality to build a Lucene query

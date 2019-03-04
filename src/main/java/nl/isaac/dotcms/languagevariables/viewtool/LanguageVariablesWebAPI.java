@@ -26,8 +26,8 @@ public class LanguageVariablesWebAPI implements ViewTool {
   private HttpServletRequest request;
 
   @Override
-  public void init(Object obj) {
-    ViewContext context = (ViewContext) obj;
+  public void init(Object initData) {
+    ViewContext context = (ViewContext) initData;
     this.request = context.getRequest();
   }
 
