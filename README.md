@@ -1,10 +1,10 @@
 ISAAC's Language Variables Plugin
 ======
-
 This repo tracks our custom changes to the ISAAC Language Variables Plugin
 
 More Info Can be found [here](http://geekyplugins.com/dot-cms/language-variables.dot)
-For dotCMS Version:  2.5.1 and Newer
+
+For dotCMS Version:  5.0.3+
 
 Changes:
 -----
