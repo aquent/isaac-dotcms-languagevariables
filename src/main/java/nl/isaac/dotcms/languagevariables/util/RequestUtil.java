@@ -5,6 +5,7 @@ package nl.isaac.dotcms.languagevariables.util;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dotmarketing.util.PageMode;
 import org.apache.velocity.tools.view.context.ViewContext;
 import org.apache.velocity.tools.view.tools.ViewTool;
 
@@ -66,19 +67,11 @@ public class RequestUtil implements ViewTool {
 	}
 	
 	public boolean isEditMode() {
-		Object EDIT_MODE_SESSION = request.getSession().getAttribute(com.dotmarketing.util.WebKeys.EDIT_MODE_SESSION);
-		if(EDIT_MODE_SESSION != null) {
-			return Boolean.valueOf(EDIT_MODE_SESSION.toString());
-		}
-		return false; 
+		return PageMode.get(request) == PageMode.EDIT_MODE;
 	}
 	
 	public boolean isPreviewMode() {
-		Object PREVIEW_MODE_SESSION = request.getSession().getAttribute(com.dotmarketing.util.WebKeys.PREVIEW_MODE_SESSION);
-		if(PREVIEW_MODE_SESSION != null) {
-			return Boolean.valueOf(PREVIEW_MODE_SESSION.toString());
-		}
-		return false; 
+		return PageMode.get(request) == PageMode.PREVIEW_MODE;
 	}
 	
 	public boolean isBackendViewOfPage() {
